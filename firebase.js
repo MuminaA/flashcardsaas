@@ -7,7 +7,7 @@ import { getAnalytics } from "firebase/analytics";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCwPGJ7gNNqJo2fqeasNtGlx6jy3tEygaU",
+  apiKey: process.env.FIRBASE_API_KEY,
   authDomain: "flashcardsaas-ef597.firebaseapp.com",
   projectId: "flashcardsaas-ef597",
   storageBucket: "flashcardsaas-ef597.appspot.com",
