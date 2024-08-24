@@ -1,4 +1,3 @@
-"use client";
 import { SignIn } from "@clerk/nextjs";
 import { AppBar, Box, Container, Toolbar, Typography, Button } from "@mui/material";
 import Link from "next/link";
