@@ -31,29 +31,29 @@ return in the following JSON format
     ]
 }`;
 
-const openai = new OpenAI({
-    baseURL: "https://openrouter.ai/api/v1",
-    apiKey: process.env.OPENROUTER_API_KEY,
-    // defaultHeaders: {
-    //   "HTTP-Referer": $YOUR_SITE_URL, // Optional, for including your app on openrouter.ai rankings.
-    //   "X-Title": $YOUR_SITE_NAME, // Optional. Shows in rankings on openrouter.ai.
-    // }
-  })
+// const openai = new OpenAI({
+//     baseURL: "https://openrouter.ai/api/v1",
+//     apiKey: process.env.OPENROUTER_API_KEY,
+//     // defaultHeaders: {
+//     //   "HTTP-Referer": $YOUR_SITE_URL, // Optional, for including your app on openrouter.ai rankings.
+//     //   "X-Title": $YOUR_SITE_NAME, // Optional. Shows in rankings on openrouter.ai.
+//     // }
+//   })
 
 export async function POST(req) { //handle post req for incoming data
-  const data = await req.text(); // reads data sent in the req (text that the user wants to turn into flashcards)
+  const openai = await req.text(); // reads data sent in the req (text that the user wants to turn into flashcards)
 
   const completion = await openai.chat.completion.create({ // talks to openAI's model asking it to generate a response based on the systemPrompt and the user provided data
     messages: [
       { role: "system", content: systemPrompt },
       { role: "user", content: data },
     ],
-    model: "openai/gpt-3.5-turbo",
-    // model: "gpt-4o", // use a particular version of the GPT model
+    // model: "openai/gpt-3.5-turbo",
+    model: "gpt-4o-mini", // use a particular version of the GPT model
     response_format: { type: "json_object" }, // set to JSON, to organize the generated flashcards into a clear structure
   });
 
   const flashcards = JSON.parse(completion.choices[0].message.content); // Response from the AI (completion) is processed to extract the flashcards that were generated.
 
-  return NextResponse.json(flashcards.flashcard); // flashcards are then returned as a JSON response, can be used by the front-end
+  return NextResponse.json(flashcards.flashcards); // flashcards are then returned as a JSON response, can be used by the front-end
 }
