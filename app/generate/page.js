@@ -32,12 +32,6 @@ export default function Generate() {
   const router = useRouter();
 
   const handleSubmit = async () => {
-    // fetch("/api/generate", {
-    //   method: "POST",
-    //   body: text,
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => setFlashcards(data));
     try {
       const response = await fetch("/api/generate", {
         method: "POST",
@@ -80,8 +74,12 @@ export default function Generate() {
       return;
     }
 
+    const newFlashcardSet = {
+      name: name, // Flashcard set name
+      flashcards: flashcards, // The generated flashcards as an array of objects
+    };
+
     const batch = writeBatch(db);
-    // const userDocRef = doc(collection(db, "users", user.id));
     const userDocRef = doc(db, "users", user.id);
     const docSnap = await getDoc(userDocRef);
 
@@ -91,11 +89,11 @@ export default function Generate() {
         alert("Flashcard collection with the same name already exists.");
         return;
       } else {
-        collections.push(name);
+        collections.push(newFlashcardSet); // Push the entire flashcard set as an object
         batch.set(userDocRef, { flashcards: collections }, { merge: true });
       }
     } else {
-      batch.set(userDocRef, { flashcards: [{ name }] });
+      batch.set(userDocRef, { flashcards: [newFlashcardSet] }); // Save as an array of flashcard sets
     }
 
     const collRef = collection(userDocRef, name);
