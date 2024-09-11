@@ -38,6 +38,58 @@ export default function Home() {
     }
   };
 
+  const basicSubmit = async () => {
+    const checkoutSession = await fetch("/api/basic_plan", {
+      method: "POST",
+      headers: {
+        origin: "http://localhost:3000",
+      },
+    });
+
+    const checkoutSessionJson = await checkoutSession.json();
+
+    if (!checkoutSession.ok) {
+      const errorResponse = await checkoutSession.json();
+      console.log("Error:", errorResponse.error);
+      return;
+    }
+
+    const stripe = await getStripe();
+    const { error } = await stripe.redirectToCheckout({
+      sessionId: checkoutSessionJson.id,
+    });
+
+    if (error) {
+      console.warn(error.message);
+    }
+  };
+
+  const freeSubmit = async () => {
+    const checkoutSession = await fetch("/api/free_plan", {
+      method: "POST",
+      headers: {
+        origin: "http://localhost:3000",
+      },
+    });
+
+    const checkoutSessionJson = await checkoutSession.json();
+
+    if (!checkoutSession.ok) {
+      const errorResponse = await checkoutSession.json();
+      console.log("Error:", errorResponse.error);
+      return;
+    }
+
+    const stripe = await getStripe();
+    const { error } = await stripe.redirectToCheckout({
+      sessionId: checkoutSessionJson.id,
+    });
+
+    if (error) {
+      console.warn(error.message);
+    }
+  };
+
   return (
     <Container maxWidth="lg">
       {/* <Head>
@@ -133,7 +185,7 @@ export default function Home() {
               <Typography>
                 Access to basic flashcard features and limited storage
               </Typography>
-              <Button varient="contained" color="primary" sx={{ mt: 2 }}>
+              <Button varient="contained" color="primary" sx={{ mt: 2 }} onClick={freeSubmit}>
                 Choose free
               </Button>
             </Box>
@@ -158,7 +210,7 @@ export default function Home() {
                 varient="contained"
                 color="primary"
                 sx={{ mt: 2 }}
-                /*onClick={basicSubmit}*/
+                onClick={basicSubmit}
               >
                 Choose basic
               </Button>
