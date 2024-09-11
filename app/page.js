@@ -10,8 +10,11 @@ import {
   Box,
   Grid,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
+
   const handleSubmit = async () => {
     const checkoutSession = await fetch("/api/checkout_session", {
       method: "POST",
@@ -90,6 +93,10 @@ export default function Home() {
     }
   };
 
+  const generateSubmit = () => {
+    router.push("/generate");  // Navigate to the generate page
+  };
+
   return (
     <Container maxWidth="lg">
       {/* <Head>
@@ -126,7 +133,7 @@ export default function Home() {
         <Typography varient="h5" gutterBottom>
           The easist way to make flashcards from your text
         </Typography>
-        <Button varient="contained" color="primary" sx={{ mt: 2 }}>
+        <Button varient="contained" color="primary" sx={{ mt: 2 }} onClick={generateSubmit}>
           Get Started
         </Button>
       </Box>
