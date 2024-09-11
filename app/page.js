@@ -1,4 +1,4 @@
-import Image from "next/image";
+"use client";
 import getStripe from "@/utils/get-stripe";
 import { SignIn, SignedOut, UserButton } from "@clerk/nextjs";
 import {
@@ -12,6 +12,32 @@ import {
 } from "@mui/material";
 
 export default function Home() {
+  const handleSubmit = async () => {
+    const checkoutSession = await fetch("/api/checkout_session", {
+      method: "POST",
+      headers: {
+        origin: "http://localhost:3000",
+      },
+    });
+
+    const checkoutSessionJson = await checkoutSession.json();
+
+    if (!checkoutSession.ok) {
+      const errorResponse = await checkoutSession.json();
+      console.log("Error:", errorResponse.error);
+      return;
+    }
+
+    const stripe = await getStripe();
+    const { error } = await stripe.redirectToCheckout({
+      sessionId: checkoutSessionJson.id,
+    });
+
+    if (error) {
+      console.warn(error.message);
+    }
+  };
+
   return (
     <Container maxWidth="lg">
       {/* <Head>
@@ -24,8 +50,12 @@ export default function Home() {
             Flashcard SaaS
           </Typography>
           <SignedOut>
-            <Button color="inherit" href='/sign-in'>Login</Button>
-            <Button color="inherit" href='/sign-up'>Sign Up</Button>
+            <Button color="inherit" href="/sign-in">
+              Login
+            </Button>
+            <Button color="inherit" href="/sign-up">
+              Sign Up
+            </Button>
           </SignedOut>
           {/* <SignIn>
             <UserButton />
@@ -38,7 +68,9 @@ export default function Home() {
           my: 4,
         }}
       >
-        <Typography variant="h2" gutterBottom>Welcome to Flashcard SaaS</Typography>
+        <Typography variant="h2" gutterBottom>
+          Welcome to Flashcard SaaS
+        </Typography>
         <Typography varient="h5" gutterBottom>
           The easist way to make flashcards from your text
         </Typography>
@@ -52,21 +84,27 @@ export default function Home() {
         </Typography>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom>Easy text input</Typography>
+            <Typography variant="h6" gutterBottom>
+              Easy text input
+            </Typography>
             <Typography>
               Simply input your text and let out software do the rest. Creating
               flashcards has never been easier
             </Typography>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom>Smart Flashcards</Typography>
+            <Typography variant="h6" gutterBottom>
+              Smart Flashcards
+            </Typography>
             <Typography>
               Our AI intelligently breaks down your text into concise
               flashcards, perfect for studying
             </Typography>
           </Grid>
-          <Grid item xs={12} md={4} >
-            <Typography variant="h6" gutterBottom>Accessible Anywhere</Typography>
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom>
+              Accessible Anywhere
+            </Typography>
             <Typography>
               Access your flashcards from any device, at any time. Study on the
               go with ease.
@@ -75,7 +113,9 @@ export default function Home() {
         </Grid>
       </Box>
       <Box sx={{ my: 6, textAlign: "center" }}>
-        <Typography variant="h4" gutterBottom>Pricing</Typography>
+        <Typography variant="h4" gutterBottom>
+          Pricing
+        </Typography>
         <Grid container spacing={4}>
           <Grid item xs={12} md={4}>
             <Box
@@ -87,11 +127,15 @@ export default function Home() {
               }}
             >
               <Typography variant="h5">Free</Typography>
-              <Typography variant="h6" gutterBottom>$0</Typography>
+              <Typography variant="h6" gutterBottom>
+                $0
+              </Typography>
               <Typography>
                 Access to basic flashcard features and limited storage
               </Typography>
-              <Button varient ="contained" color='primary' sx={{mt: 2}}>Choose free</Button>
+              <Button varient="contained" color="primary" sx={{ mt: 2 }}>
+                Choose free
+              </Button>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
@@ -104,11 +148,20 @@ export default function Home() {
               }}
             >
               <Typography variant="h5">Basic</Typography>
-              <Typography variant="h6" gutterBottom>$5 / month</Typography>
+              <Typography variant="h6" gutterBottom>
+                $5 / month
+              </Typography>
               <Typography>
                 Access to basic flashcard features and limited storage
               </Typography>
-              <Button varient ="contained" color='primary' sx={{mt: 2}}>Choose basic</Button>
+              <Button
+                varient="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                /*onClick={basicSubmit}*/
+              >
+                Choose basic
+              </Button>
             </Box>
           </Grid>
           <Grid item xs={12} md={4}>
@@ -121,11 +174,20 @@ export default function Home() {
               }}
             >
               <Typography variant="h5">Pro</Typography>
-              <Typography variant="h6" gutterBottom>$10 / month</Typography>
+              <Typography variant="h6" gutterBottom>
+                $10 / month
+              </Typography>
               <Typography>
                 Unlimited flashcards and storage, with priority support
               </Typography>
-              <Button varient ="contained" color='primary' sx={{mt: 2}}>Choose Pro</Button>
+              <Button
+                varient="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={handleSubmit}
+              >
+                Choose Pro
+              </Button>
             </Box>
           </Grid>
         </Grid>
